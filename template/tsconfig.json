@@ -1,0 +1,22 @@
+{
+  "extends": "./tsconfig.base.json",
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "tools/cli"
+    },
+    {
+      "path": "packages/datastore"
+    },
+    {
+      "path": "packages/logger"
+    }
+  ],
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@{{PROJECT_NAME}}/*": ["packages/*/src", "tools/*/src", "apps/*/src"]
+    }
+  }
+}

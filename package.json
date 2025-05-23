@@ -1,0 +1,55 @@
+{
+  "name": "create-chillenious-sveltekit",
+  "version": "1.0.0",
+  "description": "Create a new SvelteKit application with monorepo structure and authentication",
+  "type": "module",
+  "bin": {
+    "create-chillenious-sveltekit": "./bin/create-chillenious-sveltekit.js"
+  },
+  "files": [
+    "bin/",
+    "template/",
+    "README.md"
+  ],
+  "keywords": [
+    "sveltekit",
+    "svelte",
+    "monorepo",
+    "template",
+    "scaffold",
+    "lucia",
+    "authentication",
+    "typescript",
+    "pnpm",
+    "tailwind",
+    "daisyui",
+    "cli",
+    "generator"
+  ],
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "commander": "^14.0.0",
+    "fs-extra": "^11.3.0",
+    "ora": "^8.1.1",
+    "prompts": "^2.4.2"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chillenious/create-chillenious-sveltekit"
+  },
+  "bugs": {
+    "url": "https://github.com/chillenious/create-chillenious-sveltekit/issues"
+  },
+  "homepage": "https://github.com/chillenious/create-chillenious-sveltekit#readme",
+  "author": "chillenious",
+  "license": "MIT",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node bin/create-chillenious-sveltekit.js",
+    "lint": "echo \"Add linting if needed\"",
+    "format": "echo \"Add formatting if needed\""
+  }
+}

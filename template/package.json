@@ -1,0 +1,44 @@
+{
+  "name": "{{PROJECT_NAME}}",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "prebuild": "pnpm --filter @{{PROJECT_NAME}}/web svelte-kit sync",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "cli": "pnpm --filter @{{PROJECT_NAME}}/cli start",
+    "hello": "pnpm --filter @{{PROJECT_NAME}}/cli start hello",
+    "build": "pnpm run --recursive build",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yaml,yml}\" --ignore-path ./.prettierignore",
+    "lint": "eslint . --ext .ts,.tsx",
+    "clean:cli": "pnpm --filter @{{PROJECT_NAME}}/cli run clean",
+    "clean:all": "pnpm run --recursive clean",
+    "web": "pnpm run build && dotenvx run -- PORT=8080 pnpm --filter @{{PROJECT_NAME}}/web dev"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "ts-jest": "^29.3.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2",
+    "semantic-release": "^24.2.4",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.15.21",
+    "@typescript-eslint/eslint-plugin": "^8.32.1",
+    "@typescript-eslint/parser": "^8.32.1",
+    "eslint": "^9.27.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-import": "^2.31.0",
+    "dotenv-cli": "^8.0.0",
+    "husky": "9.1.7",
+    "lint-staged": "^16.0.0",
+    "prettier": "^3.5.3",
+    "rimraf": "^5.0.7"
+  },
+  "author": "chillenious",
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@9.15.4+sha512.b2dc20e2fc72b3e18848459b37359a32064663e5627a51e4c74b2c29dd8e8e0491483c3abb40789cfd578bf362fb6ba8261b05f0387d76792ed6e23ea3b1b6a0"
+}

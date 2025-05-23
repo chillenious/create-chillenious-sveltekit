@@ -1,0 +1,57 @@
+{
+  "name": "@{{PROJECT_NAME}}/web",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "prebuild": "svelte-kit sync",
+    "build": "vite build",
+    "svelte-kit-sync": "svelte-kit sync",
+    "preview": "vite preview",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "test:component": "yarn build:tag:dev --tag=$npm_config_tag && yarn serve:tag --tag=$npm_config_tag",
+    "clean:tag": "rimraf dist/$npm_config_tag",
+    "clean:tags": "rimraf dist/pie-*"
+  },
+  "dependencies": {
+    "@{{PROJECT_NAME}}/logger": "workspace:*",
+    "@{{PROJECT_NAME}}/datastore": "workspace:*",
+    "@floating-ui/dom": "^1.6.13",
+    "@iconify/json": "^2.2.323",
+    "@iconify/tailwind4": "^1.0.6",
+    "@sveltejs/adapter-auto": "^6.0.0",
+    "@sveltejs/adapter-node": "^5.2.12",
+    "@sveltejs/kit": "^2.20.4",
+    "@sveltejs/vite-plugin-svelte": "^5.0.3",
+    "arctic": "^2.3.0",
+    "autoprefixer": "^10.4.20",
+    "daisyui": "^5.0.12",
+    "highlight.js": "^11.10.0",
+    "svelte": "^5.25.6",
+    "svelte-jsoneditor": "^3.3.1",
+    "svelte-kit-sst": "^2.43.5",
+    "tailwindcss": "^4.1.3",
+    "@tailwindcss/vite": "^4.1.3",
+    "vite": "^6.2.5",
+    "esm-env": "^1.2.2",
+    "@oslojs/crypto": "^1.0.1",
+    "@oslojs/encoding": "^1.1.0",
+    "d3": "^7.9.0"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "eslint-plugin-svelte": "^2.43.0",
+    "rimraf": "^5.0.5",
+    "svelte-check": "^4.1.5",
+    "ts-node": "^10.9.2",
+    "tslib": "^2.7.0",
+    "typescript": "^5.4.2",
+    "vite-plugin-css-injected-by-js": "^3.5.2",
+    "vite-plugin-dts": "^4.5.3",
+    "@types/d3": "^7.4.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

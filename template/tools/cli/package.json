@@ -1,0 +1,67 @@
+{
+  "name": "@{{PROJECT_NAME}}/cli",
+  "version": "1.0.0",
+  "description": "CLI scripts for {{PROJECT_NAME}} project",
+  "author": "chillenious",
+  "bin": {
+    "{{PROJECT_NAME}}-cli": "./bin/run"
+  },
+  "main": "dist/index.js",
+  "files": [
+    "/bin",
+    "/dist",
+    "/npm-shrinkwrap.json",
+    "/oclif.manifest.json"
+  ],
+  "dependencies": {
+    "@oclif/core": "^4.0.36",
+    "@oclif/plugin-help": "^6.2.18",
+    "@oclif/plugin-plugins": "^5.4.21"
+  },
+  "devDependencies": {
+    "@oclif/prettier-config": "^0.2.1",
+    "@oclif/test": "^4.1.0",
+    "@types/chai": "^5.0.1",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.15.21",
+    "chai": "^5.1.2",
+    "eslint": "^9.17.0",
+    "eslint-config-oclif": "^5.2.1",
+    "eslint-config-oclif-typescript": "^3.1.12",
+    "mocha": "^10.8.2",
+    "oclif": "^4.15.33",
+    "rimraf": "^5.0.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
+  },
+  "oclif": {
+    "bin": "{{PROJECT_NAME}}-cli",
+    "dirname": "{{PROJECT_NAME}}",
+    "commands": "./dist/commands",
+    "plugins": [
+      "@oclif/plugin-help",
+      "@oclif/plugin-plugins"
+    ],
+    "topicSeparator": " ",
+    "topics": {
+      "hello": {
+        "description": "Say hello to the world and others"
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rimraf dist",
+    "lint": "eslint . --ext .ts",
+    "postpack": "rm -f oclif.manifest.json",
+    "posttest": "yarn lint",
+    "prepack": "yarn build && oclif manifest && oclif readme",
+    "test": "mocha --forbid-only \"test/**/*.test.ts\"",
+    "version": "oclif readme && git add README.md",
+    "start": "node ./bin/run"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "types": "dist/index.d.ts"
+}

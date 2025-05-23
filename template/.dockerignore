@@ -1,0 +1,9 @@
+# directories
+node_modules
+**/node_modules
+tests
+**/tests
+
+# files
+.env*
+README.md

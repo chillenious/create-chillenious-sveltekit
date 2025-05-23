@@ -1,0 +1,23 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "declaration": true,
+    "declarationMap": true,
+    "strict": true,
+    "target": "es2022",
+    "module": "commonjs"
+  },
+  "references": [
+    {
+      "path": "../../packages/logger"
+    },
+    {
+      "path": "../../packages/datastore"
+    }
+  ],
+  "include": ["./src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "test"]
+}

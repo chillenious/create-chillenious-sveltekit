@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
-import { Command } from 'commander';
+import {Command} from 'commander';
 import chalk from 'chalk';
 import fs from 'fs-extra';
 import path from 'path';
 import ora from 'ora';
 import prompts from 'prompts';
-import { execSync } from 'child_process';
-import { fileURLToPath } from 'url';
+import {execSync} from 'child_process';
+import {fileURLToPath} from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -139,9 +139,9 @@ function validateProjectName(name) {
 async function initializeGit(projectDir, projectName) {
     try {
         process.chdir(projectDir);
-        execSync('git init', { stdio: 'pipe' });
-        execSync('git add .', { stdio: 'pipe' });
-        execSync(`git commit -m "Initial commit for ${projectName}"`, { stdio: 'pipe' });
+        execSync('git init', {stdio: 'pipe'});
+        execSync('git add .', {stdio: 'pipe'});
+        execSync(`git commit -m "Initial commit for ${projectName}"`, {stdio: 'pipe'});
         return true;
     } catch (error) {
         return false;
@@ -149,8 +149,8 @@ async function initializeGit(projectDir, projectName) {
 }
 
 async function createProject(projectName, options) {
-    console.log(chalk.blue('🚀 Welcome to Chillenious SvelteKit!'));
-    console.log(chalk.gray('Creating a modern SvelteKit app with monorepo structure, authentication, and best practices.\n'));
+    console.log(chalk.blue('🚀 Welcome to SvelteKit!'));
+    console.log(chalk.gray('Creating a SvelteKit app with monorepo structure.\n'));
 
     // Get project name if not provided
     if (!projectName) {
@@ -202,22 +202,6 @@ async function createProject(projectName, options) {
         fs.removeSync(targetDir);
     }
 
-    // Ask for additional options
-    const choices = await prompts([
-        {
-            type: 'confirm',
-            name: 'includeExamples',
-            message: 'Include example pages and components?',
-            initial: true
-        },
-        {
-            type: 'confirm',
-            name: 'setupDatabase',
-            message: 'Include database configuration examples?',
-            initial: true
-        }
-    ]);
-
     const spinner = ora('Creating project structure...').start();
 
     try {
@@ -237,41 +221,11 @@ async function createProject(projectName, options) {
             PROJECT_NAME: normalizedProjectName,
             PROJECT_NAME_CAMEL: toCamelCase(normalizedProjectName),
             PROJECT_NAME_PASCAL: toPascalCase(normalizedProjectName),
-            PROJECT_NAME_TITLE: projectTitle,
-            INCLUDE_EXAMPLES: choices.includeExamples,
-            SETUP_DATABASE: choices.setupDatabase
+            PROJECT_NAME_TITLE: projectTitle
         };
 
         // Replace template variables in all files
         await replaceTemplateVariables(targetDir, templateVars);
-
-        // Remove example files if not wanted
-        if (!choices.includeExamples) {
-            const exampleFiles = [
-                path.join(targetDir, 'apps', 'web', 'src', 'routes', 'examples'),
-                path.join(targetDir, 'apps', 'web', 'src', 'lib', 'components', 'examples')
-            ];
-
-            exampleFiles.forEach(file => {
-                if (fs.existsSync(file)) {
-                    fs.removeSync(file);
-                }
-            });
-        }
-
-        // Remove database files if not wanted
-        if (!choices.setupDatabase) {
-            const dbFiles = [
-                path.join(targetDir, 'packages', 'database'),
-                path.join(targetDir, 'apps', 'web', 'src', 'lib', 'database')
-            ];
-
-            dbFiles.forEach(file => {
-                if (fs.existsSync(file)) {
-                    fs.removeSync(file);
-                }
-            });
-        }
 
         spinner.succeed('Project structure created!');
 
@@ -284,12 +238,12 @@ async function createProject(projectName, options) {
                 // Check if pnpm is available, fallback to npm
                 let packageManager = 'pnpm';
                 try {
-                    execSync('pnpm --version', { stdio: 'pipe' });
+                    execSync('pnpm --version', {stdio: 'pipe'});
                 } catch {
                     packageManager = 'npm';
                 }
 
-                execSync(`${packageManager} install`, { stdio: 'pipe' });
+                execSync(`${packageManager} install`, {stdio: 'pipe'});
                 installSpinner.succeed(`Dependencies installed with ${packageManager}!`);
             } catch (error) {
                 installSpinner.fail('Failed to install dependencies');
@@ -324,17 +278,10 @@ async function createProject(projectName, options) {
         console.log();
         console.log(chalk.bold('What you get:'));
         console.log('  🎯 SvelteKit with TypeScript');
-        console.log('  🔐 Lucia authentication setup');
         console.log('  📦 Monorepo with pnpm workspaces');
         console.log('  🎨 TailwindCSS + DaisyUI');
         console.log('  🛠️ CLI tools included');
         console.log('  📝 ESLint & Prettier configured');
-        if (choices.includeExamples) {
-            console.log('  📚 Example pages and components');
-        }
-        if (choices.setupDatabase) {
-            console.log('  🗄️ Database configuration examples');
-        }
         console.log();
         console.log(chalk.bold('Available commands:'));
         console.log(chalk.gray('  pnpm web      # Start web development server'));

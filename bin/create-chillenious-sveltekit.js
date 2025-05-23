@@ -19,9 +19,6 @@ program
     .description('Create a new SvelteKit application with monorepo structure')
     .version('1.0.0')
     .argument('[project-name]', 'Name of the project to create')
-    .option('-t, --template <template>', 'Template to use', 'default')
-    .option('--skip-install', 'Skip package installation')
-    .option('--skip-git', 'Skip git initialization')
     .action(async (projectName, options) => {
         await createProject(projectName, options);
     });
@@ -41,28 +38,38 @@ function toKebabCase(str) {
 
 async function replaceTemplateVariables(dir, variables) {
     const files = await getAllFiles(dir);
+    const totalFiles = files.filter(file =>
+        !file.includes('node_modules') &&
+        !file.includes('.git') &&
+        !isBinaryFile(file)
+    ).length;
+
+    let processedFiles = 0;
 
     for (const file of files) {
         // Skip binary files, node_modules, and .git
         if (file.includes('node_modules') || file.includes('.git') || isBinaryFile(file)) continue;
 
         try {
-            let content = fs.readFileSync(file, 'utf8');
+            const content = await fs.readFile(file, 'utf8');
+            let newContent = content;
 
             // Replace all template variables
             for (const [key, value] of Object.entries(variables)) {
                 const regex = new RegExp(`{{${key}}}`, 'g');
-                content = content.replace(regex, value);
+                newContent = newContent.replace(regex, value);
             }
 
-            // Replace @riffcraft with @projectname throughout
-            content = content.replace(/@riffcraft\//g, `@${variables.PROJECT_NAME}/`);
-            // Replace standalone riffcraft references
-            content = content.replace(/\briffcraft\b/g, variables.PROJECT_NAME);
-            // Replace Riffcraft (capitalized) references
-            content = content.replace(/\bRiffcraft\b/g, variables.PROJECT_NAME_TITLE);
+            if (newContent !== content) {
+                await fs.writeFile(file, newContent, 'utf8');
+            }
 
-            fs.writeFileSync(file, content, 'utf8');
+            processedFiles++;
+
+            // Small delay every 10 files to let spinner animate
+            if (processedFiles % 10 === 0) {
+                await new Promise(resolve => setTimeout(resolve, 10));
+            }
         } catch (error) {
             // Skip files that can't be read as text
             continue;
@@ -73,27 +80,28 @@ async function replaceTemplateVariables(dir, variables) {
 async function getAllFiles(dir) {
     const files = [];
 
-    function traverse(currentDir) {
-        const items = fs.readdirSync(currentDir);
+    async function traverse(currentDir) {
+        const items = await fs.readdir(currentDir);
 
         for (const item of items) {
-            // Skip hidden files and directories except .env.example
-            if (item.startsWith('.') && item !== '.env.example' && item !== '.eslintrc' && item !== '.gitignore') {
+            // Skip hidden files and directories except specific ones
+            if (item.startsWith('.') &&
+                !['env.example', '.eslintrc', '.gitignore', '.npmrc'].includes(item)) {
                 continue;
             }
 
             const fullPath = path.join(currentDir, item);
-            const stat = fs.statSync(fullPath);
+            const stat = await fs.stat(fullPath);
 
             if (stat.isDirectory()) {
-                traverse(fullPath);
+                await traverse(fullPath);
             } else {
                 files.push(fullPath);
             }
         }
     }
 
-    traverse(dir);
+    await traverse(dir);
     return files;
 }
 
@@ -138,19 +146,85 @@ function validateProjectName(name) {
 
 async function initializeGit(projectDir, projectName) {
     try {
+        const originalCwd = process.cwd();
         process.chdir(projectDir);
+
         execSync('git init', {stdio: 'pipe'});
+        await new Promise(resolve => setTimeout(resolve, 100));
+
         execSync('git add .', {stdio: 'pipe'});
+        await new Promise(resolve => setTimeout(resolve, 100));
+
         execSync(`git commit -m "Initial commit for ${projectName}"`, {stdio: 'pipe'});
+
+        process.chdir(originalCwd);
         return true;
     } catch (error) {
         return false;
     }
 }
 
+async function copyTemplateAsync(src, dest, spinner) {
+    try {
+        const stats = await fs.stat(src);
+
+        if (stats.isDirectory()) {
+            await fs.ensureDir(dest);
+            const files = await fs.readdir(src);
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const srcPath = path.join(src, file);
+                const destPath = path.join(dest, file);
+
+                await copyTemplateAsync(srcPath, destPath, spinner);
+
+                // Update spinner text occasionally
+                if (i % 5 === 0) {
+                    spinner.text = `Copying template files... (${file})`;
+                    await new Promise(resolve => setTimeout(resolve, 10));
+                }
+            }
+        } else {
+            await fs.copy(src, dest);
+        }
+    } catch (error) {
+        throw new Error(`Failed to copy ${src} to ${dest}: ${error.message}`);
+    }
+}
+
+async function installDependencies(packageManager, spinner) {
+    return new Promise((resolve) => {
+        const child = require('child_process').spawn(packageManager, ['install'], {
+            stdio: 'pipe',
+            shell: true
+        });
+
+        let output = '';
+
+        child.stdout.on('data', (data) => {
+            output += data.toString();
+            // Update spinner with current package being installed
+            const lines = output.split('\n');
+            const lastLine = lines[lines.length - 2] || '';
+            if (lastLine.includes('Installing') || lastLine.includes('adding')) {
+                spinner.text = `Installing dependencies... ${lastLine.substring(0, 50)}`;
+            }
+        });
+
+        child.stderr.on('data', (data) => {
+            output += data.toString();
+        });
+
+        child.on('close', (code) => {
+            resolve(code === 0);
+        });
+    });
+}
+
 async function createProject(projectName, options) {
-    console.log(chalk.blue('🚀 Welcome to SvelteKit!'));
-    console.log(chalk.gray('Creating a SvelteKit app with monorepo structure.\n'));
+    console.log(chalk.blue('🚀 Welcome to Chillenious SvelteKit!'));
+    console.log(chalk.gray('Creating a new SvelteKit application with monorepo structure.\n'));
 
     // Get project name if not provided
     if (!projectName) {
@@ -158,7 +232,7 @@ async function createProject(projectName, options) {
             type: 'text',
             name: 'projectName',
             message: 'What is your project name?',
-            initial: 'my-sveltekit-app',
+            initial: 'my-monorepo-with-sveltekit',
             validate: validateProjectName
         });
 
@@ -185,7 +259,7 @@ async function createProject(projectName, options) {
     const targetDir = path.resolve(process.cwd(), normalizedProjectName);
 
     // Check if directory exists
-    if (fs.existsSync(targetDir)) {
+    if (await fs.pathExists(targetDir)) {
         const response = await prompts({
             type: 'confirm',
             name: 'overwrite',
@@ -199,22 +273,33 @@ async function createProject(projectName, options) {
         }
 
         console.log(chalk.yellow('Removing existing directory...'));
-        fs.removeSync(targetDir);
+        await fs.remove(targetDir);
     }
 
-    const spinner = ora('Creating project structure...').start();
+    // Create spinner with better configuration
+    const spinner = ora({
+        text: 'Initializing project...',
+        spinner: process.platform === 'win32' ? 'line' : 'dots',
+        stream: process.stderr,
+        isEnabled: true
+    });
+
+    spinner.start();
 
     try {
-        // Copy template files
+        // Check template directory
         const templateDir = path.join(__dirname, '..', 'template');
 
-        if (!fs.existsSync(templateDir)) {
+        if (!(await fs.pathExists(templateDir))) {
             spinner.fail('Template directory not found');
             console.log(chalk.red('Error: Template files are missing. Please reinstall the package.'));
             process.exit(1);
         }
 
-        fs.copySync(templateDir, targetDir);
+        // Copy template files with progress
+        spinner.text = 'Copying template files...';
+        await copyTemplateAsync(templateDir, targetDir, spinner);
+        await new Promise(resolve => setTimeout(resolve, 200));
 
         // Prepare template variables
         const templateVars = {
@@ -225,45 +310,11 @@ async function createProject(projectName, options) {
         };
 
         // Replace template variables in all files
+        spinner.text = 'Processing template variables...';
         await replaceTemplateVariables(targetDir, templateVars);
+        await new Promise(resolve => setTimeout(resolve, 200));
 
         spinner.succeed('Project structure created!');
-
-        if (!options.skipInstall) {
-            const installSpinner = ora('Installing dependencies...').start();
-
-            try {
-                process.chdir(targetDir);
-
-                // Check if pnpm is available, fallback to npm
-                let packageManager = 'pnpm';
-                try {
-                    execSync('pnpm --version', {stdio: 'pipe'});
-                } catch {
-                    packageManager = 'npm';
-                }
-
-                execSync(`${packageManager} install`, {stdio: 'pipe'});
-                installSpinner.succeed(`Dependencies installed with ${packageManager}!`);
-            } catch (error) {
-                installSpinner.fail('Failed to install dependencies');
-                console.log(chalk.yellow('You can install dependencies manually by running:'));
-                console.log(chalk.cyan(`  cd ${normalizedProjectName}`));
-                console.log(chalk.cyan('  pnpm install  # or npm install'));
-            }
-        }
-
-        // Initialize git repository
-        if (!options.skipGit) {
-            const gitSpinner = ora('Initializing git repository...').start();
-            const gitSuccess = await initializeGit(targetDir, normalizedProjectName);
-
-            if (gitSuccess) {
-                gitSpinner.succeed('Git repository initialized!');
-            } else {
-                gitSpinner.warn('Git initialization skipped (git not available)');
-            }
-        }
 
         // Success message
         console.log();
@@ -271,9 +322,7 @@ async function createProject(projectName, options) {
         console.log();
         console.log(chalk.bold('Next steps:'));
         console.log(chalk.cyan(`  cd ${normalizedProjectName}`));
-        if (options.skipInstall) {
-            console.log(chalk.cyan('  pnpm install  # or npm install'));
-        }
+        console.log(chalk.cyan(`  pnpm install`));
         console.log(chalk.cyan('  pnpm web      # start development server'));
         console.log();
         console.log(chalk.bold('What you get:'));
@@ -297,8 +346,9 @@ async function createProject(projectName, options) {
         console.error(chalk.red('Error details:'), error.message);
 
         // Clean up on failure
-        if (fs.existsSync(targetDir)) {
-            fs.removeSync(targetDir);
+        if (await fs.pathExists(targetDir)) {
+            console.log(chalk.yellow('Cleaning up...'));
+            await fs.remove(targetDir);
         }
 
         process.exit(1);
@@ -306,8 +356,25 @@ async function createProject(projectName, options) {
 }
 
 // Handle process interruption
-process.on('SIGINT', () => {
+process.on('SIGINT', async () => {
     console.log(chalk.red('\nProject creation cancelled.'));
+
+    // Clean up any partial work
+    const projectName = process.argv[2];
+    if (projectName) {
+        const targetDir = path.resolve(process.cwd(), toKebabCase(projectName));
+        if (await fs.pathExists(targetDir)) {
+            console.log(chalk.yellow('Cleaning up partial installation...'));
+            await fs.remove(targetDir);
+        }
+    }
+
+    process.exit(1);
+});
+
+// Handle uncaught errors
+process.on('uncaughtException', async (error) => {
+    console.error(chalk.red('Unexpected error:'), error.message);
     process.exit(1);
 });
 

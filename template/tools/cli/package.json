@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "CLI scripts for {{PROJECT_NAME}} project",
   "author": "chillenious",
+  "type": "module",
   "bin": {
     "{{PROJECT_NAME}}-cli": "./bin/run"
   },
@@ -26,8 +27,6 @@
     "@types/node": "^22.15.21",
     "chai": "^5.1.2",
     "eslint": "^9.17.0",
-    "eslint-config-oclif": "^5.2.1",
-    "eslint-config-oclif-typescript": "^3.1.12",
     "mocha": "^10.8.2",
     "oclif": "^4.15.33",
     "rimraf": "^5.0.7",
@@ -54,8 +53,8 @@
     "clean": "rimraf dist",
     "lint": "eslint . --ext .ts",
     "postpack": "rm -f oclif.manifest.json",
-    "posttest": "yarn lint",
-    "prepack": "yarn build && oclif manifest && oclif readme",
+    "posttest": "pnpm run lint",
+    "prepack": "pnpm run build && oclif manifest && oclif readme",
     "test": "mocha --forbid-only \"test/**/*.test.ts\"",
     "version": "oclif readme && git add README.md",
     "start": "node ./bin/run"

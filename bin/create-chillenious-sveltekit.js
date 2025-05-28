@@ -204,8 +204,7 @@ async function installDependencies(packageManager, spinner) {
 
         child.stdout.on('data', (data) => {
             output += data.toString();
-            // Update spinner with current package being installed
-            const lines = output.split('\n');
+            const lines = output.split('\\n');
             const lastLine = lines[lines.length - 2] || '';
             if (lastLine.includes('Installing') || lastLine.includes('adding')) {
                 spinner.text = `Installing dependencies... ${lastLine.substring(0, 50)}`;
@@ -224,7 +223,7 @@ async function installDependencies(packageManager, spinner) {
 
 async function createProject(projectName, options) {
     console.log(chalk.blue('🚀 Welcome to Chillenious SvelteKit!'));
-    console.log(chalk.gray('Creating a new SvelteKit application with monorepo structure.\n'));
+    console.log(chalk.gray('Creating a new SvelteKit application with monorepo structure.\\n'));
 
     // Get project name if not provided
     if (!projectName) {
@@ -323,7 +322,8 @@ async function createProject(projectName, options) {
         console.log(chalk.bold('Next steps:'));
         console.log(chalk.cyan(`  cd ${normalizedProjectName}`));
         console.log(chalk.cyan(`  pnpm install`));
-        console.log(chalk.cyan('  pnpm web      # start development server'));
+        console.log(chalk.cyan('  pnpm web        # start development server'));
+        console.log(chalk.cyan('  pnpm cli hello  # run test CLI tool'));
         console.log();
         console.log(chalk.bold('What you get:'));
         console.log('  🎯 SvelteKit with TypeScript');
@@ -340,7 +340,6 @@ async function createProject(projectName, options) {
         console.log(chalk.gray('  pnpm lint     # Lint code'));
         console.log();
         console.log('Happy coding! 🚀');
-
     } catch (error) {
         spinner.fail('Failed to create project');
         console.error(chalk.red('Error details:'), error.message);

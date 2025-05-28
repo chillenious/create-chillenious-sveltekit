@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-    "test:component": "yarn build:tag:dev --tag=$npm_config_tag && yarn serve:tag --tag=$npm_config_tag",
+    "test:component": "pnpm run build:tag:dev --tag=$npm_config_tag && pnpm run serve:tag --tag=$npm_config_tag",
     "clean:tag": "rimraf dist/$npm_config_tag",
     "clean:tags": "rimraf dist/pie-*"
   },

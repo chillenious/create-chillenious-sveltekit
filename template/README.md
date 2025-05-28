@@ -61,7 +61,7 @@ pnpm build
 ### Prerequisites
 
 - **Node.js** 20+ (LTS recommended)
-- **pnpm** 9+ (or npm/yarn as alternative)
+- **pnpm** 9+
 
 ### Getting Started
 

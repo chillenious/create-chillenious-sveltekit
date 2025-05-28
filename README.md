@@ -12,12 +12,6 @@
 # Create a new project
 npx create-chillenious-sveltekit my-awesome-app
 
-# Or with npm
-npm create chillenious-sveltekit my-awesome-app
-
-# Or with yarn
-yarn create chillenious-sveltekit my-awesome-app
-
 # Or with pnpm
 pnpm create chillenious-sveltekit my-awesome-app
 ```
@@ -129,3 +123,9 @@ The generator processes all text files and:
 
 - Replaces template variables
 - Updates package names and de
+
+### Test local
+
+- npm pack
+- npm install -g ./create-chillenious-sveltekit-1.0.0.tgz
+- npx create-chillenious-sveltekit test-local

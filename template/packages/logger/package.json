@@ -1,6 +1,6 @@
 {
   "name": "@{{PROJECT_NAME}}/logger",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Logger for {{PROJECT_NAME}} project",
   "main": "dist/index.js",
   "module": "dist/index.js",

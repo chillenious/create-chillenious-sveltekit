@@ -2,47 +2,47 @@
   "name": "{{PROJECT_NAME}}",
   "version": "0.0.1",
   "description": "",
+  "type": "module",
   "private": true,
   "scripts": {
-    "prebuild": "pnpm --filter @{{PROJECT_NAME}}/web svelte-kit sync",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "cli": "pnpm --filter @{{PROJECT_NAME}}/cli build && pnpm --filter @{{PROJECT_NAME}}/cli start",
-    "build": "pnpm run --recursive build",
-    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yaml,yml}\" --ignore-path ./.prettierignore",
-    "lint": "ESLINT_USE_FLAT_CONFIG=false eslint . --ext .ts,.tsx",
-    "clean:cli": "pnpm --filter @{{PROJECT_NAME}}/cli run clean",
-    "clean:all": "pnpm run --recursive clean",
-    "web": "pnpm run build && dotenvx run -- PORT=8080 pnpm --filter @{{PROJECT_NAME}}/web dev"
+    "db:migrate": "bun --env-file=.env --cwd packages/datastore migrate",
+    "db:migrate:test": "bun --env-file=.env.test --cwd packages/datastore migrate:test",
+    "test": "bun run db:migrate:test && bun --env-file=.env.test test --recursive",
+    "cli": "bun --env-file=.env run --cwd tools/cli ./bin/run.ts",
+    "format": "biome format --write . && cd apps/web && bun run format",
+    "format:check": "biome format . && cd apps/web && bun run format:check",
+    "lint": "biome lint . && cd apps/web && bun run lint",
+    "lint:fix": "biome lint --write . && cd apps/web && bun run lint:fix",
+    "check": "biome check --write . && cd apps/web && bun run check",
+    "web": "bun --env-file=.env run --cwd apps/web dev",
+    "seed:dev": "bun --env-file=.env --cwd packages/datastore src/seeds/dev-seed.ts",
+    "seed:test": "bun --env-file=.env.test --cwd packages/datastore src/seeds/test-seed.ts",
+    "db:dev:up": "docker-compose -f docker-compose.yml up -d",
+    "db:dev:down": "docker-compose -f docker-compose.yml down",
+    "db:test:up": "docker-compose --env-file .env.test -f docker-compose.test.yml up -d",
+    "db:test:down": "docker-compose --env-file .env.test -f docker-compose.test.yml down",
+    "db:test:reset": "bun run db:test:down && docker-compose --env-file .env.test -f docker-compose.test.yml rm -sfv && bun run db:test:up",
+    "db:seed": "echo \"Seeding script to be implemented\""
   },
   "devDependencies": {
-    "jest": "^29.7.0",
-    "ts-jest": "^29.3.4",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.8.2",
-    "semantic-release": "^24.2.4",
+    "@biomejs/biome": "^1.9.4",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
-    "@types/jest": "^29.5.14",
+    "@types/bun": "^1.2.15",
     "@types/node": "^22.15.21",
-    "@typescript-eslint/eslint-plugin": "^8.32.1",
-    "@typescript-eslint/parser": "^8.32.1",
-    "eslint": "^9.27.0",
-    "eslint-config-prettier": "^10.1.5",
-    "eslint-plugin-import": "^2.31.0",
-    "dotenv-cli": "^8.0.0",
     "husky": "9.1.7",
     "lint-staged": "^16.0.0",
-    "prettier": "^3.5.3",
-    "rimraf": "^5.0.7"
+    "semantic-release": "^24.2.4",
+    "typescript": "^5.8.3"
   },
   "author": "chillenious",
   "engines": {
-    "node": ">=20"
+    "node": ">=24"
   },
-  "packageManager": "pnpm@9.15.4+sha512.b2dc20e2fc72b3e18848459b37359a32064663e5627a51e4c74b2c29dd8e8e0491483c3abb40789cfd578bf362fb6ba8261b05f0387d76792ed6e23ea3b1b6a0",
-  "pnpm": {
-    "overrides": {
-      "glob": "^10.3.10"
-    }
-  }
+  "packageManager": "bun@1.1.34",
+  "workspaces": [
+    "packages/*",
+    "apps/*",
+    "tools/*"
+  ]
 }

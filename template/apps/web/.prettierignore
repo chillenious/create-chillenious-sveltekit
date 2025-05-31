@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+bun.lockb
+package-lock.json
+
+# Build outputs
+.svelte-kit/
+build/
+dist/
+
+# Environment files
+.env
+.env.*
+
+# IDE/Editor files
+.vscode/
+.DS_Store
+
+# Generated files
+*.d.ts
+
+# Static assets (may contain minified or external code)
+static/
+
+# TypeScript compiler cache
+*.tsbuildinfo 

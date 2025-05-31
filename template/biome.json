@@ -1,0 +1,84 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "include": ["apps/**/*", "packages/**/*", "tools/**/*", "*.{ts,tsx,js,jsx,json,md}"],
+    "ignore": [
+      "node_modules",
+      "dist",
+      "build",
+      ".next",
+      ".env*",
+      "*.lock",
+      "*.log",
+      ".DS_Store",
+      "coverage",
+      ".pgdata_*",
+      "pgadmin_data_*",
+      "apps/web/**/*",
+      "**/.svelte-kit/**",
+      "**/build/**",
+      "**/dist/**",
+      "**/*.min.js",
+      "**/*.min.css",
+      "**/*.bundle.js",
+      "**/*.bundle.css",
+      "**/static/**/*.css"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100,
+    "lineEnding": "lf"
+  },
+  "organizeImports": {
+    "enabled": true
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "style": {
+        "noNonNullAssertion": "off"
+      },
+      "suspicious": {
+        "noExplicitAny": "warn"
+      },
+      "complexity": {
+        "noUselessConstructor": "error"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "trailingCommas": "es5",
+      "semicolons": "always"
+    },
+    "globals": ["Bun", "console", "process"]
+  },
+  "json": {
+    "formatter": {
+      "enabled": true,
+      "indentWidth": 2
+    }
+  },
+  "overrides": [
+    {
+      "include": ["**/migrations/**/*.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "off"
+          }
+        }
+      }
+    }
+  ]
+} 

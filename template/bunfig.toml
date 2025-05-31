@@ -1,0 +1,50 @@
+# Bun configuration file
+# See: https://bun.sh/docs/runtime/bunfig
+
+# Runtime configuration
+jsx = "react"
+logLevel = "info"  # Changed from "warn" for better development visibility
+
+# Package manager configuration
+[install]
+# Install peer dependencies by default (Bun's strength)
+peer = true
+# Install dev dependencies
+dev = true
+# Use exact versions for better reproducibility
+exact = false
+# Cache behavior
+auto = "auto"
+
+[install.lockfile]
+# Generate text-based lockfile (recommended since Bun v1.2)
+save = true
+
+# Workspace-specific install behavior
+[install.workspace]
+# Hoist dependencies to root when possible
+hoist = true
+
+# Trusted dependencies (add packages that need special permissions)
+[install.trusted]
+# Example: dependencies = ["@some/trusted-package"]
+# Add any packages that need special permissions here
+
+# Test runner configuration
+[test]
+# Coverage reporting disabled
+coverage = false
+# Only run tests in tests directories with .test.ts extension
+root = "."
+include = ["**/tests/**/*.test.ts"]
+# Exclude other test patterns
+exclude = ["**/*.spec.ts", "**/__tests__/**/*", "**/test/**/*"]
+# Preload any setup files (uncomment and add files as needed)
+# preload = ["./test/setup.ts"]
+
+# Runtime behavior
+[run]
+# Auto-alias node to bun for better compatibility
+bun = true
+# Use Bun's shell on all platforms for consistency
+shell = "bun" 

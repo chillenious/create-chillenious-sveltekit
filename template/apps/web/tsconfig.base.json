@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ESNext", "DOM"],
+    "composite": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "checkJs": true,
+    "allowJs": true
+  },
+  "include": [
+    "src/**/*",
+    "eslint.config.js",
+    "prettier.config.js",
+    "svelte.config.js",
+    "vite.config.ts"
+  ]
+}

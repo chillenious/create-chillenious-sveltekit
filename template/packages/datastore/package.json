@@ -1,19 +1,28 @@
 {
   "name": "@{{PROJECT_NAME}}/datastore",
   "version": "0.0.1",
-  "description": "Datastore for {{PROJECT_NAME}} project",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
   "scripts": {
-    "build": "tsc",
-    "clean": "rimraf dist"
+    "build": "tsc --noEmit",
+    "dev": "tsc -w",
+    "lint": "eslint . --ext .ts,.tsx",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "test": "bun test",
+    "migrate": "bun src/migrate.ts",
+    "migrate:test": "bun src/migrate-test.ts"
   },
   "dependencies": {
-    "@{{PROJECT_NAME}}/logger": "workspace:*"
+    "@{{PROJECT_NAME}}/logger": "workspace:*",
+    "kysely": "^0.27.3",
+    "pg": "^8.11.5"
   },
   "devDependencies": {
-    "typescript": "^5.8.2",
-    "rimraf": "^5.0.7"
+    "@types/pg": "^8.11.6",
+    "typescript": "^5.8.3",
+    "eslint": "^9.27.0",
+    "kysely-migrate": "^0.0.16"
   }
 }

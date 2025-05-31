@@ -2,7 +2,11 @@
   "extends": "./tsconfig.base.json",
   "files": [],
   "include": [],
+  "exclude": ["node_modules", "dist", "build", "**/node_modules", "**/dist", "**/build"],
   "references": [
+    {
+      "path": "apps/web"
+    },
     {
       "path": "tools/cli"
     },

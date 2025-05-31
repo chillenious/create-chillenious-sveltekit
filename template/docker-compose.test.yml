@@ -1,0 +1,37 @@
+services:
+  postgres_test: # Renamed service to avoid conflicts if both are run
+    image: postgres:latest
+    restart: always
+    env_file:
+      - .env.test # Use .env.test
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - '${DB_PORT}:5432' # Maps to DB_PORT from .env.test
+    volumes:
+      - ${POSTGRES_DATA_DIR:-./.pgdata_test}:/var/lib/postgresql/data # Uses POSTGRES_DATA_DIR from .env.test
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER} -d ${DB_NAME}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pgadmin_test: # Renamed service
+    image: dpage/pgadmin4:latest
+    restart: always
+    env_file:
+      - .env.test # Use .env.test
+    ports:
+      - '${PGADMIN_PORT}:80' # Maps to PGADMIN_PORT from .env.test
+    volumes:
+      - ${PGADMIN_DATA_DIR:-./pgadmin_data_test}:/var/lib/pgadmin # Uses PGADMIN_DATA_DIR from .env.test
+    depends_on:
+      postgres_test: # Depends on the renamed test postgres service
+        condition: service_healthy
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '3' 

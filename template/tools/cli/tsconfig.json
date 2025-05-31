@@ -1,14 +1,15 @@
 {
   "extends": "../../tsconfig.base.json",
+  "include": ["src", "bin"],
   "compilerOptions": {
-    "composite": true,
     "outDir": "dist",
-    "rootDir": "src",
+    "noEmit": true,
+    "composite": true,
     "declaration": true,
     "declarationMap": true,
-    "strict": true,
-    "target": "es2022",
-    "module": "esnext"
+    "target": "ESNext",
+    "module": "ESNext",
+    "allowImportingTsExtensions": true
   },
   "references": [
     {
@@ -17,7 +18,5 @@
     {
       "path": "../../packages/datastore"
     }
-  ],
-  "include": ["./src/**/*.ts"],
-  "exclude": ["node_modules", "dist", "test"]
+  ]
 }
